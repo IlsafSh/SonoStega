@@ -16,6 +16,7 @@ set(SOURCES
     src/core/LsbEmbedder.cpp
     src/core/QualityAnalyzer.cpp
     src/ui/MainWindow.cpp
+    src/ui/EmbedWidget.cpp
 )
 
 set(HEADERS
@@ -23,6 +24,7 @@ set(HEADERS
     src/core/LsbEmbedder.h
     src/core/QualityAnalyzer.h
     src/ui/MainWindow.h
+    src/ui/EmbedWidget.h
 )
 
 qt_add_executable(SonoStega

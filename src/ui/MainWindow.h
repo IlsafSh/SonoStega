@@ -3,6 +3,7 @@
 #include <QMainWindow>
 
 class QTabWidget;
+class EmbedWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -17,4 +18,5 @@ private:
     void setupMenuBar();
 
     QTabWidget *m_tabs;
+    EmbedWidget *m_embedWidget;
 };

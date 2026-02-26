@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "EmbedWidget.h"
 
 #include <QTabWidget>
 #include <QMenuBar>
@@ -8,8 +9,7 @@
 #include <QApplication>
 #include <QMessageBox>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     setWindowTitle("SonoStega — стеганография аудио");
     setMinimumSize(900, 650);
@@ -21,9 +21,17 @@ MainWindow::MainWindow(QWidget *parent)
 void MainWindow::setupUi()
 {
     m_tabs = new QTabWidget(this);
-    m_tabs->addTab(new QLabel("  Модуль встраивания — в разработке", m_tabs), "Встроить");
+
+    m_embedWidget = new EmbedWidget(m_tabs);
+    m_tabs->addTab(m_embedWidget, "Встроить");
     m_tabs->addTab(new QLabel("  Модуль извлечения — в разработке", m_tabs), "Извлечь");
     m_tabs->addTab(new QLabel("  Модуль анализа качества — в разработке", m_tabs), "Анализ качества");
+
+    // When embedding is done, show a status bar message
+    connect(m_embedWidget, &EmbedWidget::embedded, this, [this](const QString &, const QString &stego) {
+        statusBar()->showMessage("Встраивание завершено: " + stego, 5000);
+    });
+
     setCentralWidget(m_tabs);
 }
 
