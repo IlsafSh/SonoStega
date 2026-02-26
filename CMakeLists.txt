@@ -13,11 +13,13 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
 set(SOURCES
     src/main.cpp
     src/core/WavFile.cpp
+    src/core/LsbEmbedder.cpp
     src/ui/MainWindow.cpp
 )
 
 set(HEADERS
     src/core/WavFile.h
+    src/core/LsbEmbedder.h
     src/ui/MainWindow.h
 )
 
