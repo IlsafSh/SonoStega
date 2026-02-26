@@ -12,10 +12,12 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
 
 set(SOURCES
     src/main.cpp
+    src/core/WavFile.cpp
     src/ui/MainWindow.cpp
 )
 
 set(HEADERS
+    src/core/WavFile.h
     src/ui/MainWindow.h
 )
 
