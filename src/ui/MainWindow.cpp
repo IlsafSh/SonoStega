@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "EmbedWidget.h"
 #include "ExtractWidget.h"
+#include "AnalysisWidget.h"
 
 #include <QTabWidget>
 #include <QMenuBar>
@@ -23,19 +24,20 @@ void MainWindow::setupUi()
 {
     m_tabs = new QTabWidget(this);
 
-    m_embedWidget = new EmbedWidget(m_tabs);
-    m_extractWidget = new ExtractWidget(m_tabs);
+    m_embedWidget    = new EmbedWidget(m_tabs);
+    m_extractWidget  = new ExtractWidget(m_tabs);
+    m_analysisWidget = new AnalysisWidget(m_tabs);
 
-    m_tabs->addTab(m_embedWidget, "Встроить");
-    m_tabs->addTab(m_extractWidget, "Извлечь");
-    m_tabs->addTab(new QLabel("  Модуль анализа качества — в разработке", m_tabs), "Анализ качества");
+    m_tabs->addTab(m_embedWidget,    "Встроить");
+    m_tabs->addTab(m_extractWidget,  "Извлечь");
+    m_tabs->addTab(m_analysisWidget, "Анализ качества");
 
-    // After embedding: show status, auto-load stego into ExtractWidget, switch tab
+    // After embedding: populate ExtractWidget and AnalysisWidget automatically
     connect(m_embedWidget, &EmbedWidget::embedded, this,
-            [this](const QString &, const QString &stegoPath) {
+            [this](const QString &origPath, const QString &stegoPath) {
         statusBar()->showMessage("Встраивание завершено: " + stegoPath, 5000);
         m_extractWidget->loadStegoFile(stegoPath);
-        m_tabs->setCurrentWidget(m_extractWidget);
+        m_analysisWidget->loadFiles(origPath, stegoPath);
     });
 
     setCentralWidget(m_tabs);
