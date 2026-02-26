@@ -4,6 +4,7 @@
 
 class QTabWidget;
 class EmbedWidget;
+class ExtractWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -19,4 +20,5 @@ private:
 
     QTabWidget *m_tabs;
     EmbedWidget *m_embedWidget;
+    ExtractWidget *m_extractWidget;
 };

@@ -17,6 +17,7 @@ set(SOURCES
     src/core/QualityAnalyzer.cpp
     src/ui/MainWindow.cpp
     src/ui/EmbedWidget.cpp
+    src/ui/ExtractWidget.cpp
 )
 
 set(HEADERS
@@ -25,6 +26,7 @@ set(HEADERS
     src/core/QualityAnalyzer.h
     src/ui/MainWindow.h
     src/ui/EmbedWidget.h
+    src/ui/ExtractWidget.h
 )
 
 qt_add_executable(SonoStega
