@@ -14,12 +14,14 @@ set(SOURCES
     src/main.cpp
     src/core/WavFile.cpp
     src/core/LsbEmbedder.cpp
+    src/core/QualityAnalyzer.cpp
     src/ui/MainWindow.cpp
 )
 
 set(HEADERS
     src/core/WavFile.h
     src/core/LsbEmbedder.h
+    src/core/QualityAnalyzer.h
     src/ui/MainWindow.h
 )
 
