@@ -52,11 +52,17 @@ void MainWindow::setupMenuBar()
     QMenu *helpMenu = menuBar()->addMenu("Справка");
     QAction *aboutAction = helpMenu->addAction("О программе");
     connect(aboutAction, &QAction::triggered, this, [this]() {
-        QMessageBox::about(this, "О программе",
+        QMessageBox dlg(this);
+        dlg.setWindowTitle("О программе");
+        dlg.setIconPixmap(QIcon(":/icon.svg").pixmap(64, 64));
+        dlg.setText(
             "<b>SonoStega</b> v1.0<br><br>"
             "Стеганографическое скрытие данных в аудиофайлах WAV<br>"
             "методом кодирования наименее значащих бит (LSB).<br><br>"
+            "Поддерживаемые форматы: 8-бит, 16-бит, 24-бит PCM.<br>"
+            "Режимы встраивания: последовательный и с паролем.<br>"
             "Метрики качества: MSE, NMSE.<br><br>"
             "Разработано в рамках курсовой работы по стеганографии.");
+        dlg.exec();
     });
 }
