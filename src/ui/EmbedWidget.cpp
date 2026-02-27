@@ -191,6 +191,12 @@ void EmbedWidget::updateWavInfo()
     if (!m_wav.isValid())
         return;
 
+    // Widen slider range for 24-bit (noise floor is ~8 bits deep)
+    int maxBits = (m_wav.header().bitsPerSample == 24) ? 8 : 4;
+    m_nBitsSlider->setMaximum(maxBits);
+    if (m_nBitsSlider->value() > maxBits)
+        m_nBitsSlider->setValue(maxBits);
+
     const auto &h = m_wav.header();
     int totalSec = static_cast<int>(m_wav.durationSeconds());
     QString dur = QString("%1:%2").arg(totalSec / 60).arg(totalSec % 60, 2, 10, QChar('0'));

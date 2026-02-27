@@ -51,4 +51,6 @@ private:
     std::vector<int32_t> m_samples;
     QString              m_error;
     bool                 m_valid = false;
+    // > 0 only for WAVE_FORMAT_EXTENSIBLE with padded container (e.g. 24 valid bits in 32-bit container)
+    uint8_t              m_containerBytesPerSample = 0;
 };

@@ -41,6 +41,7 @@ bool WavFile::load(const QString &path)
     m_valid = false;
     m_samples.clear();
     m_error.clear();
+    m_containerBytesPerSample = 0;
 
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly)) {
@@ -86,11 +87,36 @@ bool WavFile::load(const QString &path)
             // blockAlign[12..13] — not stored, recalculated on save
             m_header.bitsPerSample = u16le(buf + pos + 14);
 
-            if (m_header.audioFormat != 1) {
+            if (m_header.audioFormat == 0xFFFE) {
+                // WAVE_FORMAT_EXTENSIBLE: extended fmt chunk with SubFormat GUID
+                // Layout after standard 16 bytes: cbSize(2) + wValidBitsPerSample(2) +
+                //   dwChannelMask(4) + SubFormat GUID(16)  → needs at least 40 bytes total
+                if (chunkSize < 40 || pos + 40 > total) {
+                    m_error = "Повреждён fmt-чанк WAVE_FORMAT_EXTENSIBLE";
+                    return false;
+                }
+                // PCM SubFormat GUID: {00000001-0000-0010-8000-00aa00389b71}
+                static const uint8_t kPcmGuid[16] = {
+                    0x01,0x00,0x00,0x00, 0x00,0x00,0x10,0x00,
+                    0x80,0x00,0x00,0xAA, 0x00,0x38,0x9B,0x71
+                };
+                if (std::memcmp(buf + pos + 24, kPcmGuid, 16) != 0) {
+                    m_error = "WAVE_FORMAT_EXTENSIBLE: поддерживается только SubFormat PCM";
+                    return false;
+                }
+                uint16_t validBits = u16le(buf + pos + 18);
+                if (validBits != 0 && validBits != m_header.bitsPerSample) {
+                    // Container is wider than valid data (e.g. 24 valid bits in 32-bit container)
+                    m_containerBytesPerSample = static_cast<uint8_t>(m_header.bitsPerSample / 8);
+                    m_header.bitsPerSample = validBits;
+                }
+                m_header.audioFormat = 1;  // treat as plain PCM from here on
+            } else if (m_header.audioFormat != 1) {
                 m_error = QString("Поддерживается только PCM (audioFormat=1), получено: %1")
                               .arg(m_header.audioFormat);
                 return false;
             }
+
             if (m_header.bitsPerSample != 8
                 && m_header.bitsPerSample != 16
                 && m_header.bitsPerSample != 24)
@@ -139,33 +165,37 @@ bool WavFile::load(const QString &path)
 // ---------------------------------------------------------------------------
 bool WavFile::parseSamples(const uint8_t *data, uint32_t size)
 {
-    const int bps  = m_header.bitsPerSample;
-    const int bpsB = bps / 8;                    // bytes per sample (8→1, 16→2, 24→3)
-    const uint32_t n = size / bpsB;
+    const int bps = m_header.bitsPerSample;   // valid bits per sample
+    // Container bytes: may be wider for WAVE_FORMAT_EXTENSIBLE (e.g. 24-bit in 32-bit slot)
+    const int cbs = m_containerBytesPerSample > 0 ? m_containerBytesPerSample : (bps / 8);
+    const uint32_t n = size / cbs;
 
     m_header.numSamples = n;
     m_samples.resize(n);
 
     for (uint32_t i = 0; i < n; ++i) {
-        const uint8_t *p = data + static_cast<size_t>(i) * bpsB;
+        const uint8_t *p = data + static_cast<size_t>(i) * cbs;
         int32_t v = 0;
 
-        switch (bps) {
-        case 8:
-            // Unsigned 0-255
-            v = static_cast<int32_t>(p[0]);
-            break;
-        case 16:
-            // Signed little-endian
-            v = static_cast<int32_t>(static_cast<int16_t>(u16le(p)));
-            break;
-        case 24:
-            // Signed 24-bit little-endian → sign-extend to int32
-            v = static_cast<int32_t>(p[0])
-              | (static_cast<int32_t>(p[1]) << 8)
-              | (static_cast<int32_t>(p[2]) << 16);
-            if (v & 0x800000) v |= 0xFF000000;  // sign extension
-            break;
+        if (cbs == 4) {
+            // 32-bit container, left-justified: valid bits occupy the top bps bits
+            int32_t raw = static_cast<int32_t>(u32le(p));
+            v = raw >> (32 - bps);  // arithmetic shift preserves sign
+        } else {
+            switch (bps) {
+            case 8:
+                v = static_cast<int32_t>(p[0]);
+                break;
+            case 16:
+                v = static_cast<int32_t>(static_cast<int16_t>(u16le(p)));
+                break;
+            case 24:
+                v = static_cast<int32_t>(p[0])
+                  | (static_cast<int32_t>(p[1]) << 8)
+                  | (static_cast<int32_t>(p[2]) << 16);
+                if (v & 0x800000) v |= 0xFF000000;
+                break;
+            }
         }
         m_samples[i] = v;
     }
