@@ -61,7 +61,7 @@ jobs:
         shell: pwsh
         run: |
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer/setup_script.iss
-          Move-Item installer\SonoStega_Setup.exe SonoStega_Setup_${{ github.ref_name }}.exe
+          Move-Item SonoStega_Setup.exe SonoStega_Setup_${{ github.ref_name }}.exe
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
