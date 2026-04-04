@@ -58,3 +58,8 @@ compile_commands.json
 *creator.user*
 
 *_qmlcache.qrc
+
+# clang
+.cache/
+
+source/
