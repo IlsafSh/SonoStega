@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QWidget>
-#include "core/WavFile.h"
+#include "core/io/WavFile.h"
 
 class QLineEdit;
 class QLabel;

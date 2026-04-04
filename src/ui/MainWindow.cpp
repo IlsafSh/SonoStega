@@ -1,7 +1,7 @@
 #include "MainWindow.h"
-#include "EmbedWidget.h"
-#include "ExtractWidget.h"
-#include "AnalysisWidget.h"
+#include "ui/embed/EmbedWidget.h"
+#include "ui/extract/ExtractWidget.h"
+#include "ui/analysis/AnalysisWidget.h"
 
 #include <QTabWidget>
 #include <QMenuBar>

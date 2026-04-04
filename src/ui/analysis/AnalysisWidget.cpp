@@ -1,5 +1,5 @@
-#include "AnalysisWidget.h"
-#include "core/QualityAnalyzer.h"
+#include "ui/analysis/AnalysisWidget.h"
+#include "core/analysis/QualityAnalyzer.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>

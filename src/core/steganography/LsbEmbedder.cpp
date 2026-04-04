@@ -1,4 +1,4 @@
-#include "LsbEmbedder.h"
+#include "core/steganography/LsbEmbedder.h"
 
 #include <algorithm>
 #include <numeric>

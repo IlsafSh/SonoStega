@@ -1,4 +1,4 @@
-#include "QualityAnalyzer.h"
+#include "core/analysis/QualityAnalyzer.h"
 
 QualityAnalyzer::Metrics QualityAnalyzer::compute(const WavFile &original, const WavFile &stego)
 {

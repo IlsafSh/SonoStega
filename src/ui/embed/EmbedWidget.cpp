@@ -1,5 +1,5 @@
-#include "EmbedWidget.h"
-#include "core/LsbEmbedder.h"
+#include "ui/embed/EmbedWidget.h"
+#include "core/steganography/LsbEmbedder.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>

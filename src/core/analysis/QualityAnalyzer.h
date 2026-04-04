@@ -1,6 +1,6 @@
 #pragma once
 
-#include "WavFile.h"
+#include "core/io/WavFile.h"
 #include <QString>
 
 // Computes audio quality metrics between an original and a stego WAV file

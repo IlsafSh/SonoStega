@@ -1,6 +1,6 @@
 #pragma once
 
-#include "WavFile.h"
+#include "core/io/WavFile.h"
 #include <QByteArray>
 #include <QString>
 #include <vector>

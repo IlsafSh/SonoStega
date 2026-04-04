@@ -12,23 +12,23 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Charts Svg)
 
 set(SOURCES
     src/main.cpp
-    src/core/WavFile.cpp
-    src/core/LsbEmbedder.cpp
-    src/core/QualityAnalyzer.cpp
+    src/core/io/WavFile.cpp
+    src/core/steganography/LsbEmbedder.cpp
+    src/core/analysis/QualityAnalyzer.cpp
     src/ui/MainWindow.cpp
-    src/ui/EmbedWidget.cpp
-    src/ui/ExtractWidget.cpp
-    src/ui/AnalysisWidget.cpp
+    src/ui/embed/EmbedWidget.cpp
+    src/ui/extract/ExtractWidget.cpp
+    src/ui/analysis/AnalysisWidget.cpp
 )
 
 set(HEADERS
-    src/core/WavFile.h
-    src/core/LsbEmbedder.h
-    src/core/QualityAnalyzer.h
+    src/core/io/WavFile.h
+    src/core/steganography/LsbEmbedder.h
+    src/core/analysis/QualityAnalyzer.h
     src/ui/MainWindow.h
-    src/ui/EmbedWidget.h
-    src/ui/ExtractWidget.h
-    src/ui/AnalysisWidget.h
+    src/ui/embed/EmbedWidget.h
+    src/ui/extract/ExtractWidget.h
+    src/ui/analysis/AnalysisWidget.h
 )
 
 qt_add_executable(SonoStega

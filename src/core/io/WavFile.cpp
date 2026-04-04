@@ -1,4 +1,4 @@
-#include "WavFile.h"
+#include "core/io/WavFile.h"
 
 #include <QFile>
 #include <cstring>

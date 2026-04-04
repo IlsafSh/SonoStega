@@ -1,5 +1,5 @@
-#include "ExtractWidget.h"
-#include "core/LsbEmbedder.h"
+#include "ui/extract/ExtractWidget.h"
+#include "core/steganography/LsbEmbedder.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
