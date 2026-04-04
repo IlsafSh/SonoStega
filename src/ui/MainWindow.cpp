@@ -54,7 +54,7 @@ void MainWindow::setupMenuBar()
     connect(aboutAction, &QAction::triggered, this, [this]() {
         QMessageBox dlg(this);
         dlg.setWindowTitle("О программе");
-        dlg.setIconPixmap(QIcon(":/icon.svg").pixmap(64, 64));
+        dlg.setIconPixmap(QIcon(":/icon.png").pixmap(64, 64));
         dlg.setText(
             "<b>SonoStega</b> v1.0<br><br>"
             "Стеганографическое скрытие данных в аудиофайлах WAV<br>"

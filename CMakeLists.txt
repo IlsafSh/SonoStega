@@ -8,7 +8,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets Charts Svg)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
 
 set(SOURCES
     src/main.cpp
@@ -42,7 +42,6 @@ target_include_directories(SonoStega PRIVATE src)
 target_link_libraries(SonoStega PRIVATE
     Qt6::Widgets
     Qt6::Charts
-    Qt6::Svg
 )
 
 if(WIN32)

@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     app.setApplicationName("SonoStega");
     app.setApplicationVersion("1.0");
     app.setOrganizationName("SonoStega");
-    app.setWindowIcon(QIcon(":/icon.svg"));
+    app.setWindowIcon(QIcon(":/icon.png"));
 
     MainWindow w;
     w.show();
