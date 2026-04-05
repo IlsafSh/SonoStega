@@ -15,6 +15,7 @@
 #include <QChartView>
 #include <QLineSeries>
 #include <QValueAxis>
+#include <QFileInfo>
 
 #include <algorithm>
 
@@ -82,11 +83,31 @@ void AnalysisWidget::setupUi()
     m_stegoChartView = new QChartView(new QChart());
     m_diffChartView  = new QChartView(new QChart());
 
-    for (auto *cv : {m_origChartView, m_stegoChartView, m_diffChartView}) {
+    m_saveOrigBtn  = new QPushButton("Сохранить как изображение...");
+    m_saveStegoBtn = new QPushButton("Сохранить как изображение...");
+    m_saveDiffBtn  = new QPushButton("Сохранить как изображение...");
+
+    auto addChartWithBtn = [&](QChartView *cv, QPushButton *btn) {
         cv->setRenderHint(QPainter::Antialiasing);
-        cv->setMinimumHeight(180);
-        chartsLayout->addWidget(cv);
-    }
+        cv->setMinimumHeight(220);
+        btn->setFixedWidth(200);
+        btn->setEnabled(false);
+        
+        auto *vbox = new QVBoxLayout();
+        vbox->setSpacing(4);
+        vbox->addWidget(cv);
+        
+        auto *hbox = new QHBoxLayout();
+        hbox->addStretch();
+        hbox->addWidget(btn);
+        vbox->addLayout(hbox);
+        
+        chartsLayout->addLayout(vbox);
+    };
+
+    addChartWithBtn(m_origChartView,  m_saveOrigBtn);
+    addChartWithBtn(m_stegoChartView, m_saveStegoBtn);
+    addChartWithBtn(m_diffChartView,  m_saveDiffBtn);
 
     auto *scrollArea = new QScrollArea();
     scrollArea->setWidget(chartsWidget);
@@ -109,6 +130,10 @@ void AnalysisWidget::setupUi()
     connect(origBtn,  &QPushButton::clicked, this, &AnalysisWidget::browseOriginal);
     connect(stegoBtn, &QPushButton::clicked, this, &AnalysisWidget::browseStego);
     connect(m_computeBtn, &QPushButton::clicked, this, &AnalysisWidget::onComputeClicked);
+
+    connect(m_saveOrigBtn,  &QPushButton::clicked, this, &AnalysisWidget::saveOrigChart);
+    connect(m_saveStegoBtn, &QPushButton::clicked, this, &AnalysisWidget::saveStegoChart);
+    connect(m_saveDiffBtn,  &QPushButton::clicked, this, &AnalysisWidget::saveDiffChart);
 }
 
 bool AnalysisWidget::tryLoadWav(const QString &path, WavFile &wav,
@@ -184,6 +209,10 @@ void AnalysisWidget::onComputeClicked()
     else
         setStatus("Метрики вычислены успешно.");
 
+    m_saveOrigBtn->setEnabled(true);
+    m_saveStegoBtn->setEnabled(true);
+    m_saveDiffBtn->setEnabled(true);
+
     updateCharts();
 }
 
@@ -256,4 +285,26 @@ void AnalysisWidget::setStatus(const QString &text, bool isError)
 {
     m_statusLabel->setText(text);
     m_statusLabel->setStyleSheet(isError ? "color: red;" : "color: green;");
+}
+
+void AnalysisWidget::saveOrigChart()  { saveChartView(m_origChartView,  "Оригинальный_сигнал"); }
+void AnalysisWidget::saveStegoChart() { saveChartView(m_stegoChartView, "Стего_сигнал"); }
+void AnalysisWidget::saveDiffChart()  { saveChartView(m_diffChartView,  "Разностный_сигнал"); }
+
+void AnalysisWidget::saveChartView(QChartView *view, const QString &title)
+{
+    if (!view || !view->chart()) return;
+
+    QString fileName = QFileDialog::getSaveFileName(
+        this, "Сохранить график: " + title, title + ".png",
+        "PNG-изображения (*.png);;JPEG-изображения (*.jpg);;Все файлы (*)");
+
+    if (fileName.isEmpty()) return;
+
+    QPixmap pixmap = view->grab();
+    if (pixmap.save(fileName)) {
+        setStatus("График сохранен: " + QFileInfo(fileName).fileName());
+    } else {
+        setStatus("Ошибка при сохранении графика", true);
+    }
 }
