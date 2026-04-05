@@ -68,21 +68,19 @@ void LsbEmbedder::embedCore(std::vector<int32_t> &samples, const uint8_t *stream
 // ---------------------------------------------------------------------------
 // extractCore — read sample LSBs into output bytes
 // ---------------------------------------------------------------------------
-size_t LsbEmbedder::extractCore(const std::vector<int32_t>  &samples, uint8_t *outData, size_t startSlot, size_t bitCount, int nBits, const std::vector<uint32_t> *indices)
+void LsbEmbedder::extractCore(const std::vector<int32_t> &samples, uint8_t *outData, size_t &bitOffset, size_t bitCount, int nBits, const std::vector<uint32_t> *indices)
 {
-    const int32_t mask = (1 << nBits) - 1;
-    size_t bitPos = 0;
-    size_t slot = startSlot;
+    for (size_t i = 0; i < bitCount; ++i) {
+        const size_t  globalPos = bitOffset + i;
+        const size_t  slot      = globalPos / nBits;
+        const int     b         = (nBits - 1) - static_cast<int>(globalPos % nBits);
 
-    while (bitPos < bitCount) {
         const size_t  si    = indices ? static_cast<size_t>((*indices)[slot]) : slot;
-        const int32_t chunk = samples[si] & mask;
-        ++slot;
+        const int32_t chunk = samples[si];
 
-        for (int b = nBits - 1; b >= 0 && bitPos < bitCount; --b, ++bitPos)
-            setBit(outData, bitPos, (chunk >> b) & 1);
+        setBit(outData, i, (chunk >> b) & 1);
     }
-    return slot;
+    bitOffset += bitCount;
 }
 
 // ---------------------------------------------------------------------------
@@ -99,7 +97,8 @@ LsbEmbedder::Result LsbEmbedder::doExtract(const WavFile &wav, QByteArray &outPa
 
     // Step 1: read 32-bit payload length
     uint8_t lenBytes[4] = {};
-    const size_t nextSlot = LsbEmbedder::extractCore(samples, lenBytes, 0, 32, nBits, indices);
+    size_t  bitOffset = 0;
+    LsbEmbedder::extractCore(samples, lenBytes, bitOffset, 32, nBits, indices);
 
     const uint32_t payloadLen =
           static_cast<uint32_t>(lenBytes[0])
@@ -122,13 +121,14 @@ LsbEmbedder::Result LsbEmbedder::doExtract(const WavFile &wav, QByteArray &outPa
 
     // Step 2: read payload
     const size_t payloadBits  = static_cast<size_t>(payloadLen) * 8;
-    const size_t payloadSlots = (payloadBits + nBits - 1) / nBits;
+    const size_t totalBitsNeeded = 32 + payloadBits;
+    const size_t totalSlotsNeeded = (totalBitsNeeded + nBits - 1) / nBits;
 
-    if (nextSlot + payloadSlots > totalSlots)
+    if (totalSlotsNeeded > totalSlots)
         return {false, "WAV-файл слишком короткий для сообщения заявленной длины"};
 
     outPayload.resize(static_cast<int>(payloadLen));
-    LsbEmbedder::extractCore(samples, reinterpret_cast<uint8_t *>(outPayload.data()), nextSlot, payloadBits, nBits, indices);
+    LsbEmbedder::extractCore(samples, reinterpret_cast<uint8_t *>(outPayload.data()), bitOffset, payloadBits, nBits, indices);
     return {true, {}};
 }
 

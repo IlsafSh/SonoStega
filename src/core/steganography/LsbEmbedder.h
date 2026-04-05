@@ -46,9 +46,8 @@ private:
     // indices != nullptr → keyed (slot i → sample (*indices)[i])
     static void embedCore(std::vector<int32_t> &samples, const uint8_t *stream, size_t totalBits, int nBits, const std::vector<uint32_t> *indices);
 
-    // Core loop: read sample LSBs into output bytes, starting at startSlot
-    // Returns the index of the next unused slot
-    static size_t extractCore(const std::vector<int32_t>  &samples, uint8_t *outData, size_t startSlot, size_t bitCount, int nBits, const std::vector<uint32_t> *indices);
+    // Core loop: read sample LSBs into output bytes, starting at bitOffset in the sample stream
+    static void extractCore(const std::vector<int32_t>  &samples, uint8_t *outData, size_t &bitOffset, size_t bitCount, int nBits, const std::vector<uint32_t> *indices);
 
     // Shared extract logic used by both sequential and keyed modes
     static Result doExtract(const WavFile &wav, QByteArray &outPayload, int nBits, const std::vector<uint32_t> *indices);
