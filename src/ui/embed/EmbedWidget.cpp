@@ -1,5 +1,8 @@
 #include "ui/embed/EmbedWidget.h"
 #include "core/steganography/LsbEmbedder.h"
+#include <QStringEncoder>
+#include <QStringDecoder>
+#include <QComboBox>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>

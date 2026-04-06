@@ -9,6 +9,7 @@ class QSlider;
 class QRadioButton;
 class QPushButton;
 class QTextEdit;
+class QComboBox;
 
 class ExtractWidget : public QWidget
 {
@@ -38,6 +39,7 @@ private:
     QLabel *m_nBitsValueLabel;
     QRadioButton *m_seqRadio;
     QRadioButton *m_keyedRadio;
+    QComboBox *m_encodingCombo;
     QWidget *m_passwordRow;
     QLineEdit *m_passwordEdit;
     QPushButton *m_extractBtn;

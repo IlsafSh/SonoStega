@@ -1,5 +1,7 @@
 #include "ui/extract/ExtractWidget.h"
 #include "core/steganography/LsbEmbedder.h"
+#include <QTextCodec>
+#include <QComboBox>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -75,6 +77,12 @@ void ExtractWidget::setupUi()
     modeRow->addWidget(m_keyedRadio);
     modeRow->addStretch();
     form->addRow("Режим:", modeRow);
+
+    m_encodingCombo = new QComboBox();
+    m_encodingCombo->addItem("UTF-8", "UTF-8");
+    m_encodingCombo->addItem("Windows-1251", "windows-1251");
+    m_encodingCombo->addItem("System (ANSI)", "System");
+    form->addRow("Кодировка данных:", m_encodingCombo);
 
     paramLayout->addLayout(form);
 
@@ -215,8 +223,25 @@ void ExtractWidget::onExtractClicked()
         return;
     }
 
-    // Display extracted text (try UTF-8, fall back to Latin-1)
-    QString text = QString::fromUtf8(m_extractedPayload);
+    // Display extracted text
+    QString encoding = m_encodingCombo->currentData().toString();
+    QTextCodec *codec = nullptr;
+
+    if (encoding == "UTF-8") {
+        codec = QTextCodec::codecForName("UTF-8");
+    } else if (encoding == "System") {
+        codec = QTextCodec::codecForLocale();
+    } else {
+        codec = QTextCodec::codecForName(encoding.toStdString().c_str());
+    }
+
+    QString text;
+    if (codec) {
+        text = codec->toUnicode(m_extractedPayload);
+    } else {
+        text = QString::fromUtf8(m_extractedPayload); // Fallback
+    }
+
     m_previewEdit->setPlainText(text);
 
     qint64 size = m_extractedPayload.size();
