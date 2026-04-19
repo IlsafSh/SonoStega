@@ -7,6 +7,7 @@
 #include <QAction>
 #include <QApplication>
 #include <QLabel>
+#include <QIcon>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QStatusBar>
@@ -16,6 +17,7 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) 
 {
   setWindowTitle("SonoStega — стеганография аудио");
+  setWindowIcon(QIcon(":/icon.png"));
   setMinimumSize(900, 650);
   setupUi();
   setupMenuBar();
@@ -58,7 +60,7 @@ void MainWindow::setupMenuBar()
     dlg.setWindowTitle("О программе");
     dlg.setIconPixmap(QIcon(":/icon.png").pixmap(64, 64));
     dlg.setText(
-              "<b>SonoStega</b> v1.1<br><br>"
+              "<b>SonoStega</b> v1.1.1<br><br>"
               "Стеганографическое скрытие данных в аудиофайлах WAV<br>"
               "методом кодирования наименее значащих бит (LSB).<br><br>"
               "Поддерживаемые форматы: 8-бит, 16-бит, 24-бит PCM.<br>"

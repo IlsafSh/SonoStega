@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(SonoStega VERSION 1.0 LANGUAGES CXX)
+project(SonoStega VERSION 1.1.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -20,6 +20,10 @@ set(SOURCES
     src/ui/extract/ExtractWidget.cpp
     src/ui/analysis/AnalysisWidget.cpp
 )
+
+if(WIN32)
+    list(APPEND SOURCES resources/app_icon.rc)
+endif()
 
 set(HEADERS
     src/core/io/WavFile.h

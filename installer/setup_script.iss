@@ -1,6 +1,6 @@
 ; SonoStega Setup Script (Inno Setup)
 #define MyAppName "SonoStega"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.1.1"
 #define MyAppPublisher "SonoStega"
 #define MyAppExeName "SonoStega.exe"
 
