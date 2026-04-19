@@ -36,7 +36,7 @@ jobs:
           host: 'windows'
           target: 'desktop'
           arch: 'win64_msvc2022_64'
-          modules: 'qtcharts core5compat'
+          modules: 'qtcharts qt5compat'
 
       - name: Setup MSVC
         uses: ilammy/msvc-dev-cmd@v1
